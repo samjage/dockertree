@@ -4,15 +4,7 @@
   "name": "DockerTree",
   "id": "samjage-dockertree-panel",
   "info": {
-    "keywords": [
-      "docker",
-      "containers",
-      "treemap",
-      "cadvisor",
-      "prometheus",
-      "load",
-      "panel"
-    ],
+    "keywords": ["docker", "containers", "treemap", "cadvisor", "prometheus", "load", "panel"],
     "description": "Treemap of your Docker containers: tile size and colour show load, with readable full names, memory on each tile and optional grouping by compose stack.",
     "author": {
       "name": "samjage",

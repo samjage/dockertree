@@ -21,11 +21,11 @@ A Grafana panel that shows all your Docker containers as a treemap. The busier a
 
 Add a DockerTree panel and three **instant** queries with **Format: Table**:
 
-| Query | Meaning | Example |
-|---|---|---|
-| A | tile size and colour: CPU load as % of the whole machine | see below |
-| B | memory in bytes (optional) | `sum by (name, stack)(label_replace(container_memory_working_set_bytes{name!=""}, "stack", "$1", "container_label_com_docker_compose_project", "(.*)"))` |
-| C | network in bits/s, shown on hover (optional) | `sum by (name)(rate(container_network_receive_bytes_total{name!=""}[2m]) + rate(container_network_transmit_bytes_total{name!=""}[2m])) * 8` |
+| Query | Meaning                                                  | Example                                                                                                                                                  |
+| ----- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A     | tile size and colour: CPU load as % of the whole machine | see below                                                                                                                                                |
+| B     | memory in bytes (optional)                               | `sum by (name, stack)(label_replace(container_memory_working_set_bytes{name!=""}, "stack", "$1", "container_label_com_docker_compose_project", "(.*)"))` |
+| C     | network in bits/s, shown on hover (optional)             | `sum by (name)(rate(container_network_receive_bytes_total{name!=""}[2m]) + rate(container_network_transmit_bytes_total{name!=""}[2m])) * 8`              |
 
 Query A:
 
@@ -42,17 +42,17 @@ cAdvisor only exports the compose project label if you allow it, e.g. `--store_c
 
 ## Options
 
-| Section | Option | Default | |
-|---|---|---|---|
-| Queries | Size & colour query | `A` | refId of the query that sets tile size and colour |
-| Queries | Memory query | `B` | refId giving memory bytes; empty hides memory |
-| Queries | Network query | `C` | refId giving bits/s; empty hides network |
-| Queries | Name label / Group label | `name` / `stack` | label or column names |
-| Layout | Group by stack | off | one box per group |
-| Layout | Readable names | 11 | minimum name size in px; 0 = size by value only |
-| Tiles | Value label | `Load` | word before the value on each tile |
-| Tiles | Show value and memory | on | |
-| Standard options | Unit / Decimals / Thresholds | percent / 1 / 5 · 15 · 25 | colours: green, yellow, orange, red |
+| Section          | Option                       | Default                   |                                                   |
+| ---------------- | ---------------------------- | ------------------------- | ------------------------------------------------- |
+| Queries          | Size & colour query          | `A`                       | refId of the query that sets tile size and colour |
+| Queries          | Memory query                 | `B`                       | refId giving memory bytes; empty hides memory     |
+| Queries          | Network query                | `C`                       | refId giving bits/s; empty hides network          |
+| Queries          | Name label / Group label     | `name` / `stack`          | label or column names                             |
+| Layout           | Group by stack               | off                       | one box per group                                 |
+| Layout           | Readable names               | 11                        | minimum name size in px; 0 = size by value only   |
+| Tiles            | Value label                  | `Load`                    | word before the value on each tile                |
+| Tiles            | Show value and memory        | on                        |                                                   |
+| Standard options | Unit / Decimals / Thresholds | percent / 1 / 5 · 15 · 25 | colours: green, yellow, orange, red               |
 
 ## Development
 

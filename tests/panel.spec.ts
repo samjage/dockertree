@@ -1,35 +1,36 @@
 import { test, expect } from '@grafana/plugin-e2e';
 
-test('should display "No data" in case panel data is empty', async ({
+test('draws one tile per container with name and load', async ({
   gotoPanelEditPage,
   readProvisionedDashboard,
+  page,
+}) => {
+  const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
+  await gotoPanelEditPage({ dashboard, id: '1' });
+  const tiles = page.getByTestId('dockertree-tile');
+  await expect(tiles.first()).toBeVisible();
+  await expect(tiles.filter({ hasText: 'home-assistant' })).toContainText('Load: 19.7%');
+});
+
+test('groups tiles by stack when "Group by stack" is on', async ({
+  gotoPanelEditPage,
+  readProvisionedDashboard,
+  page,
 }) => {
   const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
   const panelEditPage = await gotoPanelEditPage({ dashboard, id: '2' });
-  await expect(panelEditPage.panel.locator).toContainText('No data');
+  await expect(panelEditPage.panel.locator).toContainText('smarthome');
+  await expect(page.getByTestId('dockertree-tile').first()).toBeVisible();
 });
 
-test('should display circle when data is passed to the panel', async ({
-  panelEditPage,
-  readProvisionedDataSource,
-  page,
-}) => {
-  const ds = await readProvisionedDataSource({ fileName: 'datasources.yml' });
-  await panelEditPage.datasource.set(ds.name);
-  await panelEditPage.setVisualization('Dockertree');
-  await expect(page.getByTestId('simple-panel-circle')).toBeVisible();
-});
-
-test('should display series counter when "Show series counter" option is enabled', async ({
+test('hides the value line when "Show value and memory" is off', async ({
   gotoPanelEditPage,
   readProvisionedDashboard,
   page,
 }) => {
   const dashboard = await readProvisionedDashboard({ fileName: 'dashboard.json' });
   const panelEditPage = await gotoPanelEditPage({ dashboard, id: '1' });
-  const options = panelEditPage.getCustomOptions('Dockertree');
-  const showSeriesCounter = options.getSwitch('Show series counter');
-
-  await showSeriesCounter.check();
-  await expect(page.getByTestId('simple-panel-series-counter')).toBeVisible();
+  const options = panelEditPage.getCustomOptions('Tiles');
+  await options.getSwitch('Show value and memory').uncheck();
+  await expect(page.getByTestId('dockertree-tile').filter({ hasText: 'home-assistant' })).not.toContainText('Load:');
 });
