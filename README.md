@@ -5,7 +5,7 @@
 [![cAdvisor](https://img.shields.io/badge/cAdvisor-required-4285F4?logo=google&logoColor=white)](https://github.com/google/cadvisor)
 [![node-exporter](https://img.shields.io/badge/node--exporter-dashboard-E6522C?logo=prometheus&logoColor=white)](https://github.com/prometheus/node_exporter)
 [![Docker](https://img.shields.io/badge/Docker-containers-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/samjage/dockertree/blob/main/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](https://github.com/samjage/dockertree/blob/main/LICENSE)
 
 A Grafana panel that shows all your Docker containers as a treemap. The busier a container is, the bigger and hotter its tile. Every tile shows the full container name, its load and its memory, so you can spot the noisy one at a glance.
 
@@ -52,7 +52,7 @@ grafana cli plugins install samjage-dockertree-panel
 
 ## Ready-made dashboard
 
-[`dashboards/dockertree.json`](dashboards/dockertree.json) is a complete Docker host dashboard: server load, Docker CPU / memory / network / disk, the top 6 containers, disk pressure and space, restarts and out-of-memory kills, and a DockerTree treemap of every container.
+[`dashboards/dockertree.json`](https://github.com/samjage/dockertree/blob/main/dashboards/dockertree.json) is a complete Docker host dashboard: server load, Docker CPU / memory / network / disk, the top 6 containers, disk pressure and space, restarts and out-of-memory kills, and a DockerTree treemap of every container.
 
 To use it: **Dashboards → New → Import**, upload the file (or paste its grafana.com ID once published) and pick your Prometheus data source. It needs cAdvisor, node-exporter and the DockerTree plugin.
 
@@ -108,4 +108,4 @@ docker compose up  # Grafana with a demo dashboard (sample data) on http://local
 
 ## License
 
-Apache-2.0
+[MIT](https://github.com/samjage/dockertree/blob/main/LICENSE)

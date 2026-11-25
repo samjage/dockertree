@@ -14,7 +14,7 @@
     "sign": "sign-plugin"
   },
   "author": "Samjage",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "@grafana/eslint-config": "^10.0.0",
     "@grafana/plugin-e2e": "^4.0.0",
