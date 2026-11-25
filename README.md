@@ -1,5 +1,12 @@
 # DockerTree
 
+[![Grafana 13.2+](https://img.shields.io/badge/Grafana-13.2%2B-F46800?logo=grafana&logoColor=white)](https://grafana.com/grafana/download)
+[![Prometheus](https://img.shields.io/badge/Prometheus-required-E6522C?logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![cAdvisor](https://img.shields.io/badge/cAdvisor-required-4285F4?logo=google&logoColor=white)](https://github.com/google/cadvisor)
+[![node-exporter](https://img.shields.io/badge/node--exporter-dashboard-E6522C?logo=prometheus&logoColor=white)](https://github.com/prometheus/node_exporter)
+[![Docker](https://img.shields.io/badge/Docker-containers-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue)](https://github.com/samjage/dockertree/blob/main/LICENSE)
+
 A Grafana panel that shows all your Docker containers as a treemap. The busier a container is, the bigger and hotter its tile. Every tile shows the full container name, its load and its memory, so you can spot the noisy one at a glance.
 
 ![DockerTree on a real Docker host](https://raw.githubusercontent.com/samjage/dockertree/main/src/img/screenshot-dashboard.png)
@@ -17,7 +24,8 @@ _The [ready-made dashboard](#ready-made-dashboard) on a real Docker host, treema
 ## Requirements
 
 - Grafana **13.2 or later** (self-hosted or Grafana Cloud).
-- Container metrics. The examples use [cAdvisor](https://github.com/google/cadvisor) scraped by Prometheus, plus [node-exporter](https://github.com/prometheus/node-exporter) for the number of CPU cores.
+- Container metrics. The examples use [cAdvisor](https://github.com/google/cadvisor) scraped by Prometheus. The panel itself works with any data source that returns one row per container.
+- [node-exporter](https://github.com/prometheus/node_exporter) for the [ready-made dashboard](#ready-made-dashboard): its server tiles (CPU busy, load, disk pressure and space) and the CPU core count. Not needed for the panel alone.
 
 ## Install
 
