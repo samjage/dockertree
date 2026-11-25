@@ -67,11 +67,12 @@ export const plugin = new PanelPlugin<DockerTreeOptions>(DockerTreePanel)
         category: ['Layout'],
       })
       .addSliderInput({
-        path: 'minNameFont',
-        name: 'Readable names',
-        description: 'Make every tile big enough for its full name at this size (px). 0 = size strictly by value.',
-        defaultValue: 11,
-        settings: { min: 0, max: 14, step: 1 },
+        path: 'minTileSize',
+        name: 'Minimum tile size',
+        description:
+          'Every tile is at least this big (px), so small containers still show their name. Bigger tiles stay sized by value. 0 = size strictly by value.',
+        defaultValue: 80,
+        settings: { min: 0, max: 160, step: 4 },
         category: ['Layout'],
       })
       .addTextInput({

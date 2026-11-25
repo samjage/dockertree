@@ -58,7 +58,7 @@
         "nameField": "name",
         "groupField": "stack",
         "groupByStack": false,
-        "minNameFont": 11,
+        "minTileSize": 80,
         "valueLabel": "Load",
         "showStats": true
       },
@@ -117,7 +117,7 @@
         "nameField": "name",
         "groupField": "stack",
         "groupByStack": true,
-        "minNameFont": 11,
+        "minTileSize": 80,
         "valueLabel": "Load",
         "showStats": true
       },

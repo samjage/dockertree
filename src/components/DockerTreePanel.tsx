@@ -5,7 +5,7 @@ import { useStyles2, useTheme2 } from '@grafana/ui';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { DockerTreeOptions } from '../types';
 import { collect, Row } from '../lib/data';
-import { floorSizes, groupLayout, nameShares, squarify, GroupBox, Tile } from '../lib/layout';
+import { floorSizes, groupLayout, minTileShare, squarify, GroupBox, Tile } from '../lib/layout';
 import { fmtBits, fmtBytes, GAP, labelFit, LINE_H, statLine } from '../lib/label';
 
 interface Props extends PanelProps<DockerTreeOptions> {}
@@ -13,6 +13,7 @@ interface Props extends PanelProps<DockerTreeOptions> {}
 type Item = Row & { key: string; load: number; group: string };
 
 const HEADER_H = 18;
+const MIN_FONT = 9; // smallest name size before it is cut off with "…"
 
 export const DockerTreePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
   const theme = useTheme2();
@@ -41,15 +42,9 @@ export const DockerTreePanel: React.FC<Props> = ({ options, data, width, height,
   }, [data.series, map.size, theme]);
 
   const layout = useMemo(() => {
-    const shares = nameShares(
-      rows.map((r) => r.name),
-      width,
-      height,
-      options.minNameFont
-    );
     const sizes = floorSizes(
       rows.map((r) => r.value),
-      shares
+      minTileShare(options.minTileSize, width, height)
     );
     const items: Item[] = rows.map((r, i) => ({ ...r, key: r.name, load: r.value, value: sizes[i] }));
     const rect = { x: 0, y: 0, w: width, h: height };
@@ -57,7 +52,7 @@ export const DockerTreePanel: React.FC<Props> = ({ options, data, width, height,
       return groupLayout(items, rect, HEADER_H);
     }
     return { groups: [] as GroupBox[], tiles: squarify(items, rect) };
-  }, [rows, width, height, options.minNameFont, options.groupByStack]);
+  }, [rows, width, height, options.minTileSize, options.groupByStack]);
 
   if (!rows.length) {
     return <PanelDataErrorView fieldConfig={fieldConfig} panelId={id} data={data} needsStringField needsNumberField />;
@@ -96,7 +91,7 @@ function renderTile(
   const fg = theme.colors.getContrastText(bg);
   const w = Math.max(0, t.w - GAP);
   const h = Math.max(0, t.h - GAP);
-  const fit = labelFit(w, h, it.name);
+  const fit = labelFit(w, h, it.name, 14, MIN_FONT);
   const statFont = fit ? Math.min(12, fit.font) : 12;
   const spare = fit && !fit.vertical ? h - 6 - fit.font * LINE_H : 0;
   const memText = options.memoryQuery && it.mem !== undefined ? fmtBytes(it.mem) : undefined;

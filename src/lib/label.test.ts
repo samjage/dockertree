@@ -14,6 +14,9 @@ describe('labelFit', () => {
     expect(labelFit(14, 10, 'caddy')).toBeNull();
     f = labelFit(60, 40, 'audiobookshelf');
     expect(f!.clipped).toBe(true);
+    // a lower minimum font lets a long name fit instead of being cut
+    expect(labelFit(84, 40, 'audiobookshelf', 14, 10)!.clipped).toBe(true);
+    expect(labelFit(84, 40, 'audiobookshelf', 14, 9)!.clipped).toBeFalsy();
   });
 });
 

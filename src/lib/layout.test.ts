@@ -1,5 +1,4 @@
-import { squarify, floorSizes, nameShares, groupLayout } from './layout';
-import { labelFit } from './label';
+import { squarify, floorSizes, minTileShare, groupLayout } from './layout';
 
 describe('squarify', () => {
   it('fills the rect, stays inside it, areas proportional', () => {
@@ -72,17 +71,20 @@ describe('floorSizes', () => {
   });
 });
 
-describe('nameShares', () => {
-  it('gives longer names more room, enough to fit on one line at the requested font', () => {
-    const W = 1460,
-      H = 590;
-    const [short, long] = nameShares(['caddy', 'audiobookshelf'], W, H, 11);
-    expect(long).toBeGreaterThan(short);
-    const area = long * W * H;
-    const w = Math.sqrt(area * 2.5),
-      h = area / w;
-    const f = labelFit(w - 2, h - 2, 'audiobookshelf', 11);
-    expect(f && !f.clipped && f.font >= 11).toBe(true);
+describe('minTileShare', () => {
+  it('is the share of the panel taken by one minimum-size square tile', () => {
+    expect(minTileShare(80, 800, 400)).toBeCloseTo((80 * 80) / (800 * 400));
+    expect(minTileShare(0, 800, 400)).toBe(0);
+    expect(minTileShare(80, 0, 400)).toBe(0);
+  });
+
+  it('with the same minimum for all, tiles above it stay proportional to load', () => {
+    const vals = [20, 10, 5, 0.01, 0.01, 0.01];
+    const sizes = floorSizes(vals, minTileShare(80, 1000, 500));
+    expect(sizes[0] / sizes[1]).toBeCloseTo(2);
+    expect(sizes[1] / sizes[2]).toBeCloseTo(2);
+    expect(sizes[3]).toBeCloseTo(sizes[4]);
+    expect(sizes[3]).toBeGreaterThan(0.01);
   });
 });
 

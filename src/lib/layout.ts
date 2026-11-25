@@ -1,5 +1,4 @@
 /** Squarified treemap layout (Bruls, Huizing & van Wijk) plus tile-size helpers. */
-import { CHAR_W, LINE_H, PAD, GAP } from './label';
 
 export interface Rect {
   x: number;
@@ -113,19 +112,12 @@ export function floorSizes(vals: number[], share: number | number[]): number[] {
   return vals.map((v, i) => Math.max(v, sh[i] * T));
 }
 
-/**
- * Share of a W x H panel each tile needs so its name fits on one line at
- * `font` px. x1.3 headroom because squarify makes near-square tiles.
- */
-export function nameShares(names: string[], W: number, H: number, font: number): number[] {
-  if (!(font > 0) || W <= 0 || H <= 0) {
-    return names.map(() => 0);
+/** Share of a W x H panel taken by one square tile of `side` px (the minimum tile size). */
+export function minTileShare(side: number, W: number, H: number): number {
+  if (!(side > 0) || W <= 0 || H <= 0) {
+    return 0;
   }
-  return names.map((n) => {
-    const needW = n.length * font * CHAR_W + PAD + GAP + 2;
-    const needH = font * LINE_H + PAD + GAP + 2;
-    return Math.max(needW * needW * 1.3, needW * needH) / (W * H);
-  });
+  return (side * side) / (W * H);
 }
 
 export interface GroupBox extends Rect {

@@ -11,8 +11,8 @@ export interface DockerTreeOptions {
   groupField: string;
   /** Draw tiles inside one box per group. */
   groupByStack: boolean;
-  /** Give each tile room for its full name at this font size (px). 0 = size by value only. */
-  minNameFont: number;
+  /** Smallest tile, in px (square), so names stay readable. 0 = size strictly by value. */
+  minTileSize: number;
   /** Word shown before the value on each tile, e.g. "Load". */
   valueLabel: string;
   /** Show the value / memory line under the name. */

@@ -11,11 +11,11 @@ export interface LabelFit {
 }
 
 /**
- * Largest font (maxFont..10px) at which the FULL name fits on ONE line.
+ * Largest font (maxFont..minFont px) at which the FULL name fits on ONE line.
  * Tall narrow tiles use vertical text. If nothing fits the name is clipped.
  * null = tile too small for any text.
  */
-export function labelFit(w: number, h: number, name: string, maxFont = 14): LabelFit | null {
+export function labelFit(w: number, h: number, name: string, maxFont = 14, minFont = 10): LabelFit | null {
   if (w < 18 || h < 12) {
     return null;
   }
@@ -23,7 +23,7 @@ export function labelFit(w: number, h: number, name: string, maxFont = 14): Labe
   const along = (vertical ? h : w) - PAD;
   const across = (vertical ? w : h) - PAD;
   const len = name.length;
-  for (let font = Math.max(10, maxFont); font >= 10; font--) {
+  for (let font = Math.max(minFont, maxFont); font >= minFont; font--) {
     if (len * font * CHAR_W <= along && font * LINE_H <= across) {
       return { font, vertical };
     }

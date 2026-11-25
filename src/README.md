@@ -7,7 +7,7 @@ A Grafana panel that shows all your Docker containers as a treemap. The busier a
 ## Features
 
 - **Size and colour = load.** Uses Grafana's standard **Thresholds**, **Unit** and **Decimals** options, so you set the colour bands the usual way.
-- **Readable names.** Every tile is made large enough for its full name on one line (default 11 px). Set **Readable names** to 0 to size tiles strictly by value.
+- **Readable names.** Tiles are sized by load, but never smaller than a minimum (default 80 px), so small containers still show their name. Set **Minimum tile size** to 0 to size tiles strictly by value.
 - **Load and memory on the tile**, plus a hover card with group, load, memory and network.
 - **Group by stack** (optional): one box per Docker Compose project with its containers inside.
 - **Any data source.** It needs one row per container with a name label. Prometheus + cAdvisor works out of the box.
