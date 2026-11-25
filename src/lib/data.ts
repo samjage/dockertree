@@ -17,6 +17,9 @@ export interface Row {
   net?: number;
 }
 
+/** Group shown for containers without a group label (e.g. not started by Docker Compose). */
+export const NO_GROUP = 'no stack';
+
 interface Raw {
   name: string;
   group: string;
@@ -76,7 +79,7 @@ export function collect(series: DataFrame[], map: QueryMap): Row[] {
     for (const r of rowsOf(frame, map)) {
       let row = byName.get(r.name);
       if (!row) {
-        row = { name: r.name, group: '–', value: NaN };
+        row = { name: r.name, group: NO_GROUP, value: NaN };
         byName.set(r.name, row);
         order.push(r.name);
       }

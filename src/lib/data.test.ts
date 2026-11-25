@@ -35,7 +35,7 @@ describe('collect', () => {
     expect(rows.find((r) => r.name === 'caddy')!.net).toBeUndefined();
   });
 
-  it('reads time-series frames (labels on the value field); missing group becomes "–"', () => {
+  it('reads time-series frames (labels on the value field); missing group becomes "no stack"', () => {
     const rows = collect(
       [
         toDataFrame({
@@ -48,7 +48,7 @@ describe('collect', () => {
       ],
       MAP
     );
-    expect(rows.map((r) => [r.name, r.group, r.value])).toEqual([['adhoc', '–', 4]]);
+    expect(rows.map((r) => [r.name, r.group, r.value])).toEqual([['adhoc', 'no stack', 4]]);
   });
 
   it('uses the first query as size when the configured one is missing', () => {

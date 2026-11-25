@@ -2,7 +2,9 @@
 
 A Grafana panel that shows all your Docker containers as a treemap. The busier a container is, the bigger and hotter its tile. Every tile shows the full container name, its load and its memory, so you can spot the noisy one at a glance.
 
-![DockerTree](https://raw.githubusercontent.com/samjage/dockertree/main/src/img/screenshot.png)
+![DockerTree on a real Docker host](https://raw.githubusercontent.com/samjage/dockertree/main/src/img/screenshot-dashboard.png)
+
+_The [ready-made dashboard](#ready-made-dashboard) on a real Docker host, treemap grouped by stack._
 
 ## Features
 
@@ -14,17 +16,46 @@ A Grafana panel that shows all your Docker containers as a treemap. The busier a
 
 ## Requirements
 
-- Grafana 13.2 or later.
-- Container metrics, for example [cAdvisor](https://github.com/google/cadvisor) scraped by Prometheus.
+- Grafana **13.2 or later** (self-hosted or Grafana Cloud).
+- Container metrics. The examples use [cAdvisor](https://github.com/google/cadvisor) scraped by Prometheus, plus [node-exporter](https://github.com/prometheus/node-exporter) for the number of CPU cores.
+
+## Install
+
+**From the Grafana plugin catalog** (once the plugin is published): in Grafana go to **Administration → Plugins and data → Plugins**, search for DockerTree and click **Install**. Or from the command line:
+
+```bash
+grafana cli plugins install samjage-dockertree-panel
+```
+
+**From a GitHub release** (works before the catalog listing):
+
+1. Download `samjage-dockertree-panel-<version>.zip` from the [releases page](https://github.com/samjage/dockertree/releases).
+2. Unzip it into your Grafana plugins folder (`/var/lib/grafana/plugins` by default), so you get `/var/lib/grafana/plugins/samjage-dockertree-panel/`.
+3. Until the plugin is signed by Grafana, allow it to load unsigned. In `grafana.ini`:
+
+   ```ini
+   [plugins]
+   allow_loading_unsigned_plugins = samjage-dockertree-panel
+   ```
+
+   or, in Docker, the environment variable `GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=samjage-dockertree-panel`.
+
+4. Restart Grafana.
+
+## Ready-made dashboard
+
+[`dashboards/dockertree.json`](dashboards/dockertree.json) is a complete Docker host dashboard: server load, Docker CPU / memory / network / disk, the top 6 containers, disk pressure and space, restarts and out-of-memory kills, and a DockerTree treemap of every container.
+
+To use it: **Dashboards → New → Import**, upload the file (or paste its grafana.com ID once published) and pick your Prometheus data source. It needs cAdvisor, node-exporter and the DockerTree plugin.
 
 ## Setup with Prometheus and cAdvisor
 
-Add a DockerTree panel and three **instant** queries with **Format: Table**:
+To build your own panel instead, add a DockerTree panel and three **instant** queries with **Format: Table**:
 
 | Query | Meaning                                                  | Example                                                                                                                                                  |
 | ----- | -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A     | tile size and colour: CPU load as % of the whole machine | see below                                                                                                                                                |
-| B     | memory in bytes (optional)                               | `sum by (name, stack)(label_replace(container_memory_working_set_bytes{name!=""}, "stack", "$1", "container_label_com_docker_compose_project", "(.*)"))` |
+| B     | memory in bytes (optional)                               | `sum by (name, stack)(label_replace(container_memory_working_set_bytes{name!=""}, "stack", "$1", "container_label_com_docker_compose_project", "(.+)"))` |
 | C     | network in bits/s, shown on hover (optional)             | `sum by (name)(rate(container_network_receive_bytes_total{name!=""}[2m]) + rate(container_network_transmit_bytes_total{name!=""}[2m])) * 8`              |
 
 Query A:
@@ -32,13 +63,17 @@ Query A:
 ```promql
 sum by (name, stack)(
   label_replace(rate(container_cpu_usage_seconds_total{name!=""}[2m]),
-    "stack", "$1", "container_label_com_docker_compose_project", "(.*)")
+    "stack", "$1", "container_label_com_docker_compose_project", "(.+)")
 ) * 100 / scalar(count(count by (cpu)(node_cpu_seconds_total)))
 ```
 
 (Without node-exporter, replace the `scalar(...)` with your number of CPU cores.)
 
-cAdvisor only exports the compose project label if you allow it, e.g. `--store_container_labels=false --whitelisted_container_labels=com.docker.compose.project`.
+### Stacks
+
+The `stack` label comes from the Docker Compose project name. cAdvisor exports it by default; if you run cAdvisor with `--store_container_labels=false`, add `--whitelisted_container_labels=com.docker.compose.project`.
+
+Containers that were not started by Docker Compose (plain `docker run`) have no stack. They still appear, and with **Group by stack** on they share one box called **no stack**.
 
 ## Options
 

@@ -30,6 +30,10 @@
     ],
     "screenshots": [
       {
+        "name": "Docker host dashboard",
+        "path": "img/screenshot-dashboard.png"
+      },
+      {
         "name": "DockerTree",
         "path": "img/screenshot.png"
       },

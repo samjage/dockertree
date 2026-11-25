@@ -1,0 +1,1159 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "Prometheus that scrapes cAdvisor and node-exporter",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "13.2.0"
+    },
+    {
+      "type": "panel",
+      "id": "samjage-dockertree-panel",
+      "name": "DockerTree",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "title": "DockerTree",
+  "uid": "dockertree",
+  "description": "Docker host overview: server load, Docker CPU/memory/network/disk, top containers, disk pressure and space, restarts and OOM kills, and a DockerTree treemap of every container. Needs cAdvisor, node-exporter and the DockerTree panel plugin.",
+  "tags": ["docker", "cadvisor", "node-exporter", "containers", "dockertree"],
+  "editable": true,
+  "graphTooltip": 0,
+  "liveNow": false,
+  "schemaVersion": 41,
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timezone": "browser",
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+  },
+  "templating": {
+    "list": []
+  },
+  "links": [],
+  "panels": [
+    {
+      "id": 7,
+      "type": "bargauge",
+      "title": "Server Busy/Load",
+      "description": "Both are % of the whole server (all cores = 100%). CPU busy: time the CPUs are working. Load: 1-minute load average ÷ number of cores; it also counts processes waiting on the disk, so it can go over 100%.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "(1 - avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1m]))) * 100",
+          "legendFormat": "CPU busy",
+          "range": true
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "node_load1 / scalar(count(count by (cpu)(node_cpu_seconds_total))) * 100",
+          "legendFormat": "Load"
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "top",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#73BF69"
+              },
+              {
+                "value": 50,
+                "color": "#FADE2A"
+              },
+              {
+                "value": 80,
+                "color": "#FF9830"
+              },
+              {
+                "value": 100,
+                "color": "#F2495C"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 1,
+      "type": "bargauge",
+      "title": "Docker CPU Usage",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 0,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[2m])) * 100 / scalar(count(count by (cpu)(node_cpu_seconds_total)))",
+          "legendFormat": "of all cores"
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#73BF69"
+              },
+              {
+                "value": 50,
+                "color": "#FADE2A"
+              },
+              {
+                "value": 80,
+                "color": "#F2495C"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 2,
+      "type": "bargauge",
+      "title": "Docker Memory Usage",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "sum(container_memory_working_set_bytes{name!=\"\"})",
+          "legendFormat": "used",
+          "range": true
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#5794F2"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#73BF69",
+                      "value": null
+                    },
+                    {
+                      "color": "#FADE2A",
+                      "value": 50
+                    },
+                    {
+                      "color": "#F2495C",
+                      "value": 80
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 5,
+      "type": "bargauge",
+      "title": "Top 6 containers (load, % of server)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 6
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sort_desc(topk(6, sum by (name, stack)(label_replace(rate(container_cpu_usage_seconds_total{name!=\"\"}[2m]),\"stack\",\"$1\",\"container_label_com_docker_compose_project\",\"(.+)\"))*100 / scalar(count(count by (cpu)(node_cpu_seconds_total)))))",
+          "instant": true,
+          "legendFormat": "{{name}}",
+          "range": false
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "left",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 50,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#73BF69"
+              },
+              {
+                "value": 5,
+                "color": "#FADE2A"
+              },
+              {
+                "value": 15,
+                "color": "#FF9830"
+              },
+              {
+                "value": 25,
+                "color": "#F2495C"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          },
+          "noValue": "–"
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 4,
+      "type": "bargauge",
+      "title": "Docker Net Usage",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 3,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(container_network_receive_bytes_total{name!=\"\",interface=~\"eth.*\"}[2m]))*8",
+          "legendFormat": "in"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(container_network_transmit_bytes_total{name!=\"\",interface=~\"eth.*\"}[2m]))*8",
+          "legendFormat": "out"
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "text"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 60,
+                "color": "#EAB839"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 3,
+      "type": "bargauge",
+      "title": "Docker Disk Usage",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 3,
+        "w": 4,
+        "h": 3
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(container_fs_reads_bytes_total{name!=\"\"}[2m]))",
+          "legendFormat": "read"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum(rate(container_fs_writes_bytes_total{name!=\"\"}[2m]))",
+          "legendFormat": "write"
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "text"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 60,
+                "color": "#EAB839"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "continuous-GrYlRd"
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 8,
+      "type": "bargauge",
+      "title": "Server Disk pressure",
+      "description": "% of time programs were waiting on the disk (5-minute average, Linux PSI). \"Some\" = at least one program waiting; \"All stalled\" = everything waiting on the disk at once. Above ~20% the server feels slow.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 5,
+        "h": 5
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "rate(node_pressure_io_waiting_seconds_total[5m])*100",
+          "instant": true,
+          "legendFormat": "some waiting",
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "rate(node_pressure_io_stalled_seconds_total[5m])*100",
+          "instant": true,
+          "legendFormat": "all stalled",
+          "range": false
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 50,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#73BF69"
+              },
+              {
+                "value": 10,
+                "color": "#FADE2A"
+              },
+              {
+                "value": 20,
+                "color": "#FF9830"
+              },
+              {
+                "value": 35,
+                "color": "#F2495C"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 9,
+      "type": "bargauge",
+      "title": "Server Disk Space",
+      "description": "Main drive: % used, and free space.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 5,
+        "y": 6,
+        "w": 4,
+        "h": 5
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"})*100",
+          "instant": true,
+          "legendFormat": "used",
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/\"}",
+          "instant": true,
+          "legendFormat": "free",
+          "range": false
+        }
+      ],
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "textMode": "auto",
+        "valueMode": "color"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 0,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "#73BF69"
+              },
+              {
+                "value": 75,
+                "color": "#FADE2A"
+              },
+              {
+                "value": 85,
+                "color": "#FF9830"
+              },
+              {
+                "value": 95,
+                "color": "#F2495C"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "bytes"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "max"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#5794F2",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "Restarts & Out-of-Memory kills (last 24h)",
+      "description": "Containers that (re)started more than 10 minutes after the server booted, or were killed for running out of memory. Newest first. Empty = nothing went wrong.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 9,
+        "y": 6,
+        "w": 15,
+        "h": 5
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "count by (name)(last_over_time(container_start_time_seconds{name!=\"\"}[24h]) > scalar(node_boot_time_seconds) + 600)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (name)(increase(container_oom_events_total{name!=\"\"}[24h])) > 0",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(time() - max by (name)(container_start_time_seconds{name!=\"\"})) and on(name) count by (name)(last_over_time(container_start_time_seconds{name!=\"\"}[24h]) > scalar(node_boot_time_seconds) + 600)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        }
+      ],
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [],
+        "zebraStriping": false
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 80,
+                "color": "red"
+              }
+            ]
+          },
+          "noValue": "–",
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Restarts / new (24h)"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "#73BF69",
+                      "value": null
+                    },
+                    {
+                      "color": "#FADE2A",
+                      "value": 2
+                    },
+                    {
+                      "color": "#FF9830",
+                      "value": 3
+                    },
+                    {
+                      "color": "#F2495C",
+                      "value": 5
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "OOM kills"
+            },
+            "properties": [
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "transparent",
+                      "value": null
+                    },
+                    {
+                      "color": "#F2495C",
+                      "value": 1
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Up for"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "dtdurations"
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "sort": [
+              {
+                "desc": false,
+                "field": "Value #C"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "indexByName": {
+              "Value #A": 1,
+              "Value #B": 2,
+              "Value #C": 3,
+              "name": 0
+            },
+            "renameByName": {
+              "Value #A": "Restarts / new (24h)",
+              "Value #B": "OOM kills",
+              "Value #C": "Up for",
+              "name": "Container"
+            }
+          }
+        }
+      ],
+      "pluginVersion": "13.2.0"
+    },
+    {
+      "id": 6,
+      "type": "samjage-dockertree-panel",
+      "title": "Containers — size & colour = load (hover for details)",
+      "description": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 11,
+        "w": 24,
+        "h": 14
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "clamp_min(sum by (name, stack)(label_replace(rate(container_cpu_usage_seconds_total{name!=\"\"}[2m]),\"stack\",\"$1\",\"container_label_com_docker_compose_project\",\"(.+)\"))*100 / scalar(count(count by (cpu)(node_cpu_seconds_total))), 0.125)",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "sum by (name, stack)(label_replace(container_memory_working_set_bytes{name!=\"\"},\"stack\",\"$1\",\"container_label_com_docker_compose_project\",\"(.+)\"))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "expr": "(sum by (name, stack)(label_replace(rate(container_network_receive_bytes_total{name!=\"\",interface=~\"eth.*\"}[2m]),\"stack\",\"$1\",\"container_label_com_docker_compose_project\",\"(.+)\")) + sum by (name, stack)(label_replace(rate(container_network_transmit_bytes_total{name!=\"\",interface=~\"eth.*\"}[2m]),\"stack\",\"$1\",\"container_label_com_docker_compose_project\",\"(.+)\")))*8",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "",
+          "range": false
+        }
+      ],
+      "options": {
+        "groupByStack": true,
+        "groupField": "stack",
+        "memoryQuery": "B",
+        "minTileSize": 96,
+        "nameField": "name",
+        "networkQuery": "C",
+        "showStats": true,
+        "sizeQuery": "A",
+        "valueLabel": "Load"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "value": null,
+                "color": "green"
+              },
+              {
+                "value": 5,
+                "color": "yellow"
+              },
+              {
+                "value": 15,
+                "color": "orange"
+              },
+              {
+                "value": 25,
+                "color": "red"
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      }
+    }
+  ],
+  "version": 1
+}
