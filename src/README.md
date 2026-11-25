@@ -54,7 +54,9 @@ grafana cli plugins install samjage-dockertree-panel
 
 [`dashboards/dockertree.json`](https://github.com/samjage/dockertree/blob/main/dashboards/dockertree.json) is a complete Docker host dashboard: server load, Docker CPU / memory / network / disk, the top 6 containers, disk pressure and space, restarts and out-of-memory kills, and a DockerTree treemap of every container.
 
-To use it: **Dashboards → New → Import**, upload the file (or paste its grafana.com ID once published) and pick your Prometheus data source. It needs cAdvisor, node-exporter and the DockerTree plugin.
+It's also on grafana.com as [dashboard 26115](https://grafana.com/grafana/dashboards/26115-dockertree/).
+
+To use it: **Dashboards → New → Import**, enter **26115** (or upload the file) and pick your Prometheus data source. It needs cAdvisor, node-exporter and the DockerTree plugin.
 
 ## Setup with Prometheus and cAdvisor
 
