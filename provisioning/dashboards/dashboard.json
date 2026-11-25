@@ -1,0 +1,130 @@
+{
+  "title": "DockerTree demo",
+  "uid": "dockertree-demo",
+  "schemaVersion": 41,
+  "editable": true,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "samjage-dockertree-panel",
+      "title": "Containers (sample data)",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 16
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,19.7\nfrigate,smarthome,8.4\nplex,media,3.1\npostgres,nextcloud,1.2\nnextcloud,nextcloud,0.9\ngrafana,monitoring,0.6\nprometheus,monitoring,0.5\ntraefik,proxy,0.3\nredis,nextcloud,0.2\nnode-exporter,monitoring,0.1\ncadvisor,monitoring,0.4\nuptime-kuma,monitoring,0.2\nvaultwarden,security,0.05\npihole,dns,0.2\nmosquitto,smarthome,0.05"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,1500000000.0\nfrigate,smarthome,950000000.0\nplex,media,610000000.0\npostgres,nextcloud,320000000.0\nnextcloud,nextcloud,260000000.0\ngrafana,monitoring,160000000.0\nprometheus,monitoring,410000000.0\ntraefik,proxy,45000000.0\nredis,nextcloud,12000000.0\nnode-exporter,monitoring,22000000.0\ncadvisor,monitoring,90000000.0\nuptime-kuma,monitoring,110000000.0\nvaultwarden,security,40000000.0\npihole,dns,70000000.0\nmosquitto,smarthome,9000000.0"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,2100000.0\nfrigate,smarthome,4000000.0\nplex,media,910000.0\npostgres,nextcloud,50000.0\nnextcloud,nextcloud,300000.0\ngrafana,monitoring,90000.0\nprometheus,monitoring,60000.0\ntraefik,proxy,190000.0\nredis,nextcloud,20000.0\nnode-exporter,monitoring,10000.0\ncadvisor,monitoring,10000.0\nuptime-kuma,monitoring,5000.0\nvaultwarden,security,1000.0\npihole,dns,30000.0\nmosquitto,smarthome,2000.0"
+        }
+      ],
+      "options": {
+        "sizeQuery": "A",
+        "memoryQuery": "B",
+        "networkQuery": "C",
+        "nameField": "name",
+        "groupField": "stack",
+        "groupByStack": false,
+        "minNameFont": 11,
+        "valueLabel": "Load",
+        "showStats": true
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "type": "samjage-dockertree-panel",
+      "title": "Grouped by stack (sample data)",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "trlxrdZVk"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 24,
+        "h": 14
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,19.7\nfrigate,smarthome,8.4\nplex,media,3.1\npostgres,nextcloud,1.2\nnextcloud,nextcloud,0.9\ngrafana,monitoring,0.6\nprometheus,monitoring,0.5\ntraefik,proxy,0.3\nredis,nextcloud,0.2\nnode-exporter,monitoring,0.1\ncadvisor,monitoring,0.4\nuptime-kuma,monitoring,0.2\nvaultwarden,security,0.05\npihole,dns,0.2\nmosquitto,smarthome,0.05"
+        },
+        {
+          "refId": "B",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,1500000000.0\nfrigate,smarthome,950000000.0\nplex,media,610000000.0\npostgres,nextcloud,320000000.0\nnextcloud,nextcloud,260000000.0\ngrafana,monitoring,160000000.0\nprometheus,monitoring,410000000.0\ntraefik,proxy,45000000.0\nredis,nextcloud,12000000.0\nnode-exporter,monitoring,22000000.0\ncadvisor,monitoring,90000000.0\nuptime-kuma,monitoring,110000000.0\nvaultwarden,security,40000000.0\npihole,dns,70000000.0\nmosquitto,smarthome,9000000.0"
+        },
+        {
+          "refId": "C",
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "trlxrdZVk"
+          },
+          "scenarioId": "csv_content",
+          "csvContent": "name,stack,value\nhome-assistant,smarthome,2100000.0\nfrigate,smarthome,4000000.0\nplex,media,910000.0\npostgres,nextcloud,50000.0\nnextcloud,nextcloud,300000.0\ngrafana,monitoring,90000.0\nprometheus,monitoring,60000.0\ntraefik,proxy,190000.0\nredis,nextcloud,20000.0\nnode-exporter,monitoring,10000.0\ncadvisor,monitoring,10000.0\nuptime-kuma,monitoring,5000.0\nvaultwarden,security,1000.0\npihole,dns,30000.0\nmosquitto,smarthome,2000.0"
+        }
+      ],
+      "options": {
+        "sizeQuery": "A",
+        "memoryQuery": "B",
+        "networkQuery": "C",
+        "nameField": "name",
+        "groupField": "stack",
+        "groupByStack": true,
+        "minNameFont": 11,
+        "valueLabel": "Load",
+        "showStats": true
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      }
+    }
+  ]
+}

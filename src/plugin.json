@@ -1,0 +1,56 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "DockerTree",
+  "id": "samjage-dockertree-panel",
+  "info": {
+    "keywords": [
+      "docker",
+      "containers",
+      "treemap",
+      "cadvisor",
+      "prometheus",
+      "load",
+      "panel"
+    ],
+    "description": "Treemap of your Docker containers: tile size and colour show load, with readable full names, memory on each tile and optional grouping by compose stack.",
+    "author": {
+      "name": "samjage",
+      "url": "https://github.com/samjage"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Source",
+        "url": "https://github.com/samjage/dockertree"
+      },
+      {
+        "name": "Issues",
+        "url": "https://github.com/samjage/dockertree/issues"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/samjage/dockertree/blob/main/LICENSE"
+      }
+    ],
+    "screenshots": [
+      {
+        "name": "DockerTree",
+        "path": "img/screenshot.png"
+      },
+      {
+        "name": "Grouped by stack",
+        "path": "img/screenshot-grouped.png"
+      }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=13.2.0",
+    "plugins": []
+  }
+}
